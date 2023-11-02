@@ -1,49 +1,51 @@
-import React, { Component } from 'react'
+import React, { useContext } from 'react'
+import { useState } from 'react';
+import { UsersContext } from '../context/usersContext';
+import { AlertContext } from '../context/alertContext';
 
-export class Search extends Component {
+const Search = () => {
 
-    constructor(props) {
-        super(props);
-        this.state = {
-            keyword: ''
-        }
+    const [keyword , setKeyword] = useState('');
+    const {searchUsers , users , clearResults} =useContext(UsersContext);
+    const {displayAlert} = useContext(AlertContext)
+
+    const onChange = (e) => {
+        setKeyword(e.target.value)
+        // this.setState({
+        //     keyword: e.target.value
+        // })
     }
 
-    onChange = (e) => {
-        this.setState({
-            keyword: e.target.value
-        })
-    }
-
-    onSubmit = (e) => {
+    const onSubmit = (e) => {
         e.preventDefault();
 
-        if(this.state.keyword === '') {
-            this.props.displayAlert('Anahtar Kelime Giriniz', 'warning');
+        if(keyword === '') {
+            displayAlert('Anahtar Kelime Giriniz', 'warning');
         } else {
-            this.props.searchUsers(this.state.keyword);
-            this.setState({ keyword: '' });
+            searchUsers(keyword);
+            // setState({ keyword: '' });
+            setKeyword('');
         }
     }
 
-    render() {
+
         return (
         <div className="container my-3">
-            <form onSubmit={this.onSubmit}>
+            <form onSubmit={onSubmit}>
                 <div className="input-group">
-                    <input type="text" value={this.state.keyword} onChange={this.onChange} className='form-control' placeholder='Anahtar Kelime' />
+                    <input type="text" value={keyword} onChange={onChange} className='form-control' placeholder='Anahtar Kelime' />
                     <button className="btn btn-primary" type='submit'>Ara</button>
                 </div>
             </form>
 
             {
-                this.props.showClearButton && <button onClick={this.props.clearResults} className="btn btn-outline-danger mt-2 btn-block">Sonuçları Temizle</button>
+                users.length && <button onClick={clearResults} className="btn btn-outline-danger mt-2 btn-block">Sonuçları Temizle</button>
             }
            
 
         </div>
         )
-    }
+
 }
 
 export default Search
